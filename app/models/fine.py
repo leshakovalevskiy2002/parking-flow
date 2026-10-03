@@ -41,4 +41,4 @@ class Fine(Base):
     )
     user: Mapped["User | None"] = relationship(back_populates="user_fines", foreign_keys=[user_id])
 
-    __table_args__ = (CheckConstraint("amount > 0", "positive_fine_amount"),)
+    __table_args__ = (CheckConstraint("amount > 0", "ck_positive_fine_amount"),)

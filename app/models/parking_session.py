@@ -53,4 +53,7 @@ class ParkingSession(Base):
 
     __table_args__ = (
         CheckConstraint("end_time IS NULL OR end_time >= start_time", name="end_after_start_time"),
+        CheckConstraint("total_cost IS NULL OR total_cost > 0", name="ck_total_cost"),
+        CheckConstraint("hourly_rate_snapshot > 0", name="ck_hourly_rate_snapshot"),
+        CheckConstraint("minimum_charge_snapshot >= 0", name="ck_minimum_charge_snapshot"),
     )
