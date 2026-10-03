@@ -56,7 +56,8 @@ exclude = [
     "README.md",
     ".pytest_cache",
     "alembic/versions",
-    ".pre-commit-config.yaml"
+    ".pre-commit-config.yaml",
+    ".gitignore",
 ]
 
 [tool.ruff.lint]
