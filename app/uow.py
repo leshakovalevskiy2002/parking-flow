@@ -2,6 +2,8 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.repositories.users import UserRepository
+
 
 class UnitOfWork:
     def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
@@ -10,6 +12,9 @@ class UnitOfWork:
 
     async def __aenter__(self) -> Self:
         self._session = self.session_factory()
+
+        self.users = UserRepository(self.session)
+
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:

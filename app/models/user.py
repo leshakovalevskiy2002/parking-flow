@@ -24,7 +24,11 @@ class User(Base):
     )
 
     parking_sessions: Mapped[list["ParkingSession"]] = relationship(back_populates="user")
-    issued_fines: Mapped[list["Fine"]] = relationship(back_populates="issued_by")
-    user_fines: Mapped[list["Fine"]] = relationship(back_populates="user")
+    issued_fines: Mapped[list["Fine"]] = relationship(
+        back_populates="issued_by", foreign_keys="Fine.issued_by_id"
+    )
+    user_fines: Mapped[list["Fine"]] = relationship(
+        back_populates="user", foreign_keys="Fine.user_id"
+    )
 
     __table_args__ = (UniqueConstraint("email", name="uq_user_email"),)
