@@ -1,9 +1,8 @@
-from collections.abc import AsyncGenerator
 from functools import lru_cache
 
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.models import Fine, ParkingPlace, ParkingSession, Rate, User  # noqa: F401
 from app.models.base import Base
@@ -53,11 +52,6 @@ database_settings = get_database_settings()
 DATABASE_URL = database_settings.url
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
 
 
 async def init_db():
