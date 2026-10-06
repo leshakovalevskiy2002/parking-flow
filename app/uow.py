@@ -2,6 +2,7 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.repositories.parking_places import ParkingPlaceRepository
 from app.repositories.users import UserRepository
 
 
@@ -14,6 +15,7 @@ class UnitOfWork:
         self._session = self.session_factory()
 
         self.users = UserRepository(self.session)
+        self.parking_places = ParkingPlaceRepository(self.session)
 
         return self
 
@@ -33,6 +35,9 @@ class UnitOfWork:
             raise RuntimeError("UoW is not started")
 
         return self._session
+
+    async def flush(self) -> None:
+        await self.session.flush()
 
     async def commit(self) -> None:
         await self.session.commit()
