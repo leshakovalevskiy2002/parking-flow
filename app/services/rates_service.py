@@ -65,7 +65,7 @@ class RateService:
 
             original_exception = exc.orig.__cause__
             if isinstance(original_exception, UniqueViolationError):
-                raise RateAlreadyExistsError(rate.name) from exc
+                raise RateAlreadyExistsError(new_name or name) from exc
             raise
 
         return rate
