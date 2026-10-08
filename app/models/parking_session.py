@@ -28,7 +28,7 @@ class ParkingSession(Base):
     place_id: Mapped[UUID] = mapped_column(
         ForeignKey("parking_places.id", ondelete="RESTRICT"), index=True
     )
-    rate_id: Mapped[UUID] = mapped_column(ForeignKey("rates.id", ondelete="RESTRICT"))
+    rate_id: Mapped[UUID] = mapped_column(ForeignKey("rates.id", ondelete="RESTRICT"), index=True)
     car_number: Mapped[str] = mapped_column(String(16), index=True)
 
     start_time: Mapped[datetime] = mapped_column(

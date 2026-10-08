@@ -14,8 +14,11 @@ class Rate(Base):
     name: Mapped[str] = mapped_column(String(150))
     price_per_hour: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     minimum_charge: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    is_active: Mapped[bool] = mapped_column(default=True)
 
-    parking_sessions: Mapped[list["ParkingSession"]] = relationship(back_populates="rate")
+    parking_sessions: Mapped[list["ParkingSession"]] = relationship(
+        back_populates="rate", lazy="raise"
+    )
 
     __table_args__ = (
         UniqueConstraint("name", name="uq_rate_name"),
