@@ -69,7 +69,7 @@ class ParkingPlaceService:
 
             original_exception = exc.orig.__cause__
             if isinstance(original_exception, UniqueViolationError):
-                raise ParkingPlaceAlreadyExistsError(parking_place.number) from exc
+                raise ParkingPlaceAlreadyExistsError(new_number or number) from exc
             raise
 
         return parking_place
