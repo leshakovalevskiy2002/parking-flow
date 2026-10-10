@@ -8,9 +8,11 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Numeric,
     String,
     func,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,11 +27,9 @@ if TYPE_CHECKING:
 
 class ParkingSession(Base):
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"), index=True)
-    place_id: Mapped[UUID] = mapped_column(
-        ForeignKey("parking_places.id", ondelete="RESTRICT"), index=True
-    )
+    place_id: Mapped[UUID] = mapped_column(ForeignKey("parking_places.id", ondelete="RESTRICT"))
     rate_id: Mapped[UUID] = mapped_column(ForeignKey("rates.id", ondelete="RESTRICT"), index=True)
-    car_number: Mapped[str] = mapped_column(String(16), index=True)
+    car_number: Mapped[str] = mapped_column(String(16))
 
     start_time: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -56,4 +56,22 @@ class ParkingSession(Base):
         CheckConstraint("total_cost IS NULL OR total_cost > 0", name="ck_total_cost"),
         CheckConstraint("hourly_rate_snapshot > 0", name="ck_hourly_rate_snapshot"),
         CheckConstraint("minimum_charge_snapshot >= 0", name="ck_minimum_charge_snapshot"),
+        CheckConstraint(
+            "status = 'ACTIVE' OR end_time IS NOT NULL", name="ck_active_session_has_no_end_time"
+        ),
+        CheckConstraint(
+            "status = 'ACTIVE' OR total_cost IS NOT NULL", name="ck_finished_session_has_cost"
+        ),
+        Index(
+            "uq_active_session_per_car",
+            "car_number",
+            unique=True,
+            postgresql_where=text("status = 'ACTIVE'"),
+        ),
+        Index(
+            "uq_active_session_per_place",
+            "place_id",
+            unique=True,
+            postgresql_where=text("status = 'ACTIVE'"),
+        ),
     )

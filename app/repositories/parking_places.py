@@ -17,6 +17,17 @@ class ParkingPlaceRepository:
         result = await self.session.scalars(query)
         return result.one_or_none()
 
+    async def find_first_free(self) -> ParkingPlace | None:
+        query = (
+            select(ParkingPlace)
+            .where(ParkingPlace.status == ParkingPlaceStatus.FREE)
+            .order_by(ParkingPlace.number)
+            .with_for_update(skip_locked=True)
+            .limit(1)
+        )
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
     async def create(
         self, number: str, place_type: ParkingPlaceType, status: ParkingPlaceStatus
     ) -> ParkingPlace:
