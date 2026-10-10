@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.v1.security import get_current_active_user
 from app.dependencies import get_parking_sessions_service
-from app.domain.errors import DomainError
+from app.domain.errors import ParkingError
 from app.models import User
 from app.schemas.parking_sessions import CheckInRequest, ParkingSessionResponse
 from app.services.exceptions.rates import RateNotExistsError
@@ -27,5 +27,5 @@ async def check_in(
         )
     except RateNotExistsError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    except DomainError as exc:
+    except ParkingError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
