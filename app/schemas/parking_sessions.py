@@ -10,7 +10,6 @@ from app.core.enums import ParkingSessionStatus
 
 class ParkingSessionBaseRequest(BaseModel):
     car_number: Annotated[str, Field(max_length=16)]
-    rate_name: Annotated[str, Field(max_length=150)]
 
     @field_validator("car_number", mode="before")
     @classmethod
