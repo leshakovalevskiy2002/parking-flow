@@ -1,6 +1,9 @@
-from sqlalchemy import select
+from uuid import UUID
 
-from app.core.enums import ParkingPlaceStatus, ParkingPlaceType
+from sqlalchemy import case, exists, select, type_coerce, update
+
+from app.core.enums import ParkingPlaceStatus, ParkingPlaceType, ParkingSessionStatus
+from app.models import ParkingSession
 from app.models.parking_place import ParkingPlace
 
 
@@ -40,3 +43,25 @@ class ParkingPlaceRepository:
         await self.session.delete(parking_place)
         await self.session.flush()
         return
+
+    async def refresh_status(self, place_id: UUID):
+        active_exists = exists(1).where(
+            ParkingSession.place_id == place_id,
+            ParkingSession.status == ParkingSessionStatus.ACTIVE,
+        )
+
+        query = (
+            update(ParkingPlace)
+            .values(
+                status=case(
+                    (
+                        active_exists,
+                        type_coerce(ParkingPlaceStatus.OCCUPIED, ParkingPlace.status.type),
+                    ),
+                    else_=type_coerce(ParkingPlaceStatus.FREE, ParkingPlace.status.type),
+                )
+            )
+            .where(ParkingPlace.id == place_id)
+        )
+
+        await self.session.execute(query)

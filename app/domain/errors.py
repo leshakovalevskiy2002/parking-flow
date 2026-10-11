@@ -16,6 +16,14 @@ class CarAlreadyParkedError(ParkingError):
         super().__init__(f"Car with car_number `{car_number}` already parked")
 
 
+class CarNotParkedError(ParkingError):
+    code = "CAR_NOT_PARKED"
+
+    def __init__(self, car_number: str) -> None:
+        self.car_number = car_number
+        super().__init__(f"Car with car_number `{car_number}` not parked")
+
+
 class NoFreePlaceError(ParkingError):
     code = "NO_FREE_PLACE"
 

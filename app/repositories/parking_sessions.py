@@ -1,7 +1,8 @@
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import exists, select
+from sqlalchemy import exists, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.enums import ParkingSessionStatus
@@ -48,3 +49,15 @@ class ParkingSessionRepository:
         self.session.add(parking_session)
         await self.session.flush()
         return parking_session
+
+    async def close_if_active(self, session_id: UUID, end_time: datetime, total_cost: Decimal):
+        query = (
+            update(ParkingSession)
+            .where(
+                ParkingSession.id == session_id,
+                ParkingSession.status == ParkingSessionStatus.ACTIVE,
+            )
+            .values(end_time=end_time, total_cost=total_cost, status=ParkingSessionStatus.FINISHED)
+        )
+        result = await self.session.execute(query)
+        return result.rowcount == 1  # type: ignore
