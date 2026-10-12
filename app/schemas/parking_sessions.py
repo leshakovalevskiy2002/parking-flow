@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.enums import ParkingSessionStatus
+from app.schemas.users import UserNestedResponse
 
 
 class ParkingSessionBaseRequest(BaseModel):
@@ -19,7 +20,7 @@ class ParkingSessionBaseRequest(BaseModel):
         return car_number
 
 
-class CheckInRequest(ParkingSessionBaseRequest):
+class ParkingSessionCheckInRequest(ParkingSessionBaseRequest):
     rate_name: Annotated[str, Field(max_length=150)]
 
     @field_validator("rate_name", mode="before")
@@ -30,7 +31,7 @@ class CheckInRequest(ParkingSessionBaseRequest):
         return rate_name
 
 
-class CheckOutRequest(ParkingSessionBaseRequest):
+class ParkingSessionCheckOutRequest(ParkingSessionBaseRequest):
     pass
 
 
@@ -53,3 +54,40 @@ class ParkingSessionCheckOutResponse(BaseModel):
     start_time: datetime
     end_time: datetime
     total_cost: Decimal
+
+
+class ParkingSessionItemResponse(BaseModel):
+    id: UUID
+    car_number: str
+    status: ParkingSessionStatus
+    start_time: datetime
+    end_time: datetime | None
+    total_cost: Decimal | None
+    place_number: str
+    rate_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ParkingSessionListResponse(BaseModel):
+    items: list[ParkingSessionItemResponse]
+    total: int
+    page: int
+    size: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ParkingSessionItemAdminResponse(ParkingSessionItemResponse):
+    user: UserNestedResponse
+    hourly_rate_snapshot: Decimal
+    minimum_charge_snapshot: Decimal
+
+
+class ParkingSessionListAdminResponse(BaseModel):
+    items: list[ParkingSessionItemAdminResponse]
+    total: int
+    page: int
+    size: int
+
+    model_config = ConfigDict(from_attributes=True)

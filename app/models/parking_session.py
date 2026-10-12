@@ -75,3 +75,11 @@ class ParkingSession(Base):
             postgresql_where=text("status = 'ACTIVE'"),
         ),
     )
+
+    @property
+    def place_number(self):
+        return self.parking_place.number
+
+    @property
+    def rate_name(self):
+        return self.rate.name

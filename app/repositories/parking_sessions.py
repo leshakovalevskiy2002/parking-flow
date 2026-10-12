@@ -2,8 +2,10 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import exists, select, update
+from sqlalchemy import exists, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 
 from app.core.enums import ParkingSessionStatus
 from app.models import ParkingSession
@@ -61,3 +63,32 @@ class ParkingSessionRepository:
         )
         result = await self.session.execute(query)
         return result.rowcount == 1  # type: ignore
+
+    async def get_paginated(
+        self,
+        filters: list[ColumnElement[bool]],
+        page: int,
+        size: int,
+        order_by: UnaryExpression,
+    ) -> tuple[list[ParkingSession], int]:
+        base_query = select(ParkingSession)
+        if filters:
+            base_query = base_query.where(*filters)
+
+        count_query = select(func.count()).select_from(base_query.subquery())
+        total = (await self.session.execute(count_query)).scalar_one()
+
+        items_query = (
+            base_query.options(
+                selectinload(ParkingSession.parking_place),
+                selectinload(ParkingSession.rate),
+                selectinload(ParkingSession.user),
+            )
+            .order_by(order_by)
+            .offset((page - 1) * size)
+            .limit(size)
+        )
+        result = await self.session.scalars(items_query)
+        items = list(result.all())
+
+        return items, total

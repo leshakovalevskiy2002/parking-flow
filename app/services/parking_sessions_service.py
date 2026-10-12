@@ -1,9 +1,10 @@
 from datetime import UTC, datetime
+from uuid import UUID
 
 from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
-from app.core.enums import ParkingPlaceStatus
+from app.core.enums import ParkingPlaceStatus, ParkingSessionStatus
 from app.domain.errors import CarAlreadyParkedError, CarNotParkedError, NoFreePlaceError
 from app.domain.pricing import calculate_cost
 from app.models import ParkingSession, User
@@ -88,3 +89,40 @@ class ParkingSessionsService:
             "end_time": end_time,
             "total_cost": total_cost,
         }
+
+    async def get_parking_sessions(
+        self,
+        user_id: UUID | None,
+        status: ParkingSessionStatus | None,
+        car_number: str | None,
+        place_id: UUID | None = None,
+        rate_id: UUID | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        page: int = 1,
+        size: int = 10,
+    ):
+        filters = []
+        if user_id is not None:
+            filters.append(ParkingSession.user_id == user_id)
+        if status is not None:
+            filters.append(ParkingSession.status == status)
+        if car_number is not None:
+            filters.append(ParkingSession.car_number == car_number.upper())
+        if place_id is not None:
+            filters.append(ParkingSession.place_id == place_id)
+        if rate_id is not None:
+            filters.append(ParkingSession.rate_id == rate_id)
+        if from_date is not None:
+            filters.append(ParkingSession.start_time >= from_date)
+        if to_date is not None:
+            filters.append(ParkingSession.start_time <= to_date)
+
+        items, total = await self.uow.parking_sessions.get_paginated(
+            filters=filters,
+            page=page,
+            size=size,
+            order_by=ParkingSession.car_number.asc(),
+        )
+
+        return {"items": items, "total": total, "page": page, "size": size}

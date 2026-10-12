@@ -27,3 +27,8 @@ class UserResponse(BaseModel):
     updated: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserNestedResponse(BaseModel):
+    id: UUID
+    email: str
