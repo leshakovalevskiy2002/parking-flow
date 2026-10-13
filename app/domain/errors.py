@@ -29,3 +29,11 @@ class NoFreePlaceError(ParkingError):
 
     def __init__(self) -> None:
         super().__init__("No free parking places")
+
+
+class CarIsParkedLegallyError(ParkingError):
+    code = "CAR_IS_PARKED_LEGALLY"
+
+    def __init__(self, car_number: str) -> None:
+        self.car_number = car_number
+        super().__init__(f"Car with car_number `{car_number}` parked legally")

@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 
 class Fine(Base):
+    idempotency_key: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     car_number: Mapped[str] = mapped_column(String(16), index=True)
     user_id: Mapped[UUID | None] = mapped_column(ForeignKey("users.id"))
     reason: Mapped[str] = mapped_column(Text)

@@ -2,6 +2,7 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.repositories.fines import FinesRepository
 from app.repositories.parking_places import ParkingPlaceRepository
 from app.repositories.parking_sessions import ParkingSessionRepository
 from app.repositories.rates import RateRepository
@@ -20,6 +21,7 @@ class UnitOfWork:
         self.parking_places = ParkingPlaceRepository(self.session)
         self.rates = RateRepository(self.session)
         self.parking_sessions = ParkingSessionRepository(self.session)
+        self.fines = FinesRepository(self.session)
 
         return self
 
