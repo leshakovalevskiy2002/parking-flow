@@ -5,6 +5,7 @@ from fastapi import Depends
 
 from app.config.settings import async_session_maker
 from app.services.auth_service import AuthService
+from app.services.fines_service import FinesService
 from app.services.parking_places_service import ParkingPlaceService
 from app.services.parking_sessions_service import ParkingSessionsService
 from app.services.rates_service import RateService
@@ -36,3 +37,9 @@ async def get_parking_sessions_service(
     uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
 ) -> ParkingSessionsService:
     return ParkingSessionsService(uow)
+
+
+async def get_fines_service(
+    uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
+) -> FinesService:
+    return FinesService(uow)
