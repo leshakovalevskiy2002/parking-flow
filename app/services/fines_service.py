@@ -1,8 +1,11 @@
+from datetime import datetime
 from decimal import Decimal
+from uuid import UUID
 
 from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
+from app.core.enums import FineStatus
 from app.domain.errors import CarIsParkedLegallyError
 from app.models import Fine, User
 from app.uow import UnitOfWork
@@ -46,3 +49,37 @@ class FinesService:
                 if existing:
                     return existing
             raise
+
+    async def get_fines(
+        self,
+        user_id: UUID | None,
+        car_number: str | None,
+        status: FineStatus | None,
+        from_date: datetime | None,
+        to_date: datetime | None,
+        page: int,
+        size: int,
+        inspector_id: UUID | None = None,
+    ):
+        filters = []
+        if user_id is not None:
+            filters.append(Fine.user_id == user_id)
+        if car_number is not None:
+            filters.append(Fine.car_number == car_number.upper())
+        if status is not None:
+            filters.append(Fine.status == status)
+        if from_date is not None:
+            filters.append(Fine.issued_at >= from_date)
+        if to_date is not None:
+            filters.append(Fine.issued_at <= to_date)
+        if inspector_id is not None:
+            filters.append(Fine.issued_by_id == inspector_id)
+
+        items, total = await self.uow.fines.get_fines(
+            filters=filters,
+            page=page,
+            size=size,
+            order_by=Fine.issued_at.asc(),
+        )
+
+        return {"items": items, "total": total, "page": page, "size": size}
