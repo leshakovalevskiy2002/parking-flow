@@ -3,7 +3,9 @@ from decimal import Decimal
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from app.core.enums import FineStatus
 
 
 class FineResponse(BaseModel):
@@ -23,3 +25,37 @@ class CreateFineRequest(BaseModel):
         if isinstance(car_number, str):
             return car_number.upper()
         return car_number
+
+
+class FineItemResponse(BaseModel):
+    id: UUID
+    car_number: str
+    reason: str
+    amount: Decimal
+    status: FineStatus
+    issued_by_id: UUID
+    issued_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FineListResponse(BaseModel):
+    items: list[FineItemResponse]
+    total: int
+    page: int
+    size: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FineItemAdminResponse(FineItemResponse):
+    user_id: UUID | None
+
+
+class FineListAdminResponse(BaseModel):
+    items: list[FineItemAdminResponse]
+    total: int
+    page: int
+    size: int
+
+    model_config = ConfigDict(from_attributes=True)
