@@ -1,18 +1,8 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 
 from app.api import router
-from app.config.settings import init_db
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await init_db()
-    yield
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 app.include_router(router)
 
 
