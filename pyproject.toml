@@ -16,7 +16,8 @@ dependencies = [
     "python-multipart (>=0.0.32,<0.0.33)",
     "pyjwt (>=2.15.0,<3.0.0)",
     "pwdlib[argon2] (>=0.3.1,<0.4.0)",
-    "pydantic-settings (>=2.15.0,<3.0.0)"
+    "pydantic-settings (>=2.15.0,<3.0.0)",
+    "alembic (>=1.20.0,<2.0.0)"
 ]
 
 [tool.poetry]
@@ -48,7 +49,7 @@ ignore_missing_imports = true
 target-version = "py312"
 line-length = 100
 
-exclude = [
+extend-exclude = [
     ".git",
     "__pycache__",
     ".idea",
@@ -60,6 +61,8 @@ exclude = [
     "alembic/versions",
     ".pre-commit-config.yaml",
     ".gitignore",
+    "migrations",
+    "alembic.ini",
 ]
 
 [tool.ruff.lint]
@@ -75,6 +78,7 @@ select = [
 ]
 
 ignore = ["E501"]
+exclude = ["migrations"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]

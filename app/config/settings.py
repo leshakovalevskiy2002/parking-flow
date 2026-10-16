@@ -5,7 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.models import Fine, ParkingPlace, ParkingSession, Rate, User  # noqa: F401
-from app.models.base import Base
 
 
 class DatabaseSettings(BaseSettings):
@@ -52,8 +51,3 @@ database_settings = get_database_settings()
 DATABASE_URL = database_settings.url
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
