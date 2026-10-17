@@ -20,10 +20,10 @@ class ParkingPlaceRepository:
         result = await self.session.scalars(query)
         return result.one_or_none()
 
-    async def find_first_free(self) -> ParkingPlace | None:
+    async def find_first_free(self, place_type: ParkingPlaceType) -> ParkingPlace | None:
         query = (
             select(ParkingPlace)
-            .where(ParkingPlace.status == ParkingPlaceStatus.FREE)
+            .where(ParkingPlace.status == ParkingPlaceStatus.FREE, ParkingPlace.type == place_type)
             .order_by(ParkingPlace.number)
             .with_for_update(skip_locked=True)
             .limit(1)

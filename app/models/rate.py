@@ -1,9 +1,10 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Numeric, String, UniqueConstraint
+from sqlalchemy import CheckConstraint, Enum, Numeric, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.enums import ParkingPlaceType
 from app.models.base import Base
 
 if TYPE_CHECKING:
@@ -15,6 +16,10 @@ class Rate(Base):
     price_per_hour: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     minimum_charge: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     is_active: Mapped[bool] = mapped_column(default=True)
+    place_type: Mapped[ParkingPlaceType] = mapped_column(
+        Enum(ParkingPlaceType, name="parking_type_enum"),
+        server_default=ParkingPlaceType.REGULAR.value,
+    )
 
     parking_sessions: Mapped[list["ParkingSession"]] = relationship(
         back_populates="rate", lazy="raise"

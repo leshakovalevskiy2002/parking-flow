@@ -3,6 +3,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.enums import ParkingPlaceType
 from app.models.rate import Rate
 
 
@@ -19,8 +20,19 @@ class RateRepository:
         result = await self.session.scalars(query)
         return result.one_or_none()
 
-    async def create(self, name: str, price_per_hour: Decimal, minimum_charge: Decimal) -> Rate:
-        rate = Rate(name=name, price_per_hour=price_per_hour, minimum_charge=minimum_charge)
+    async def create(
+        self,
+        name: str,
+        price_per_hour: Decimal,
+        minimum_charge: Decimal,
+        place_type: ParkingPlaceType,
+    ) -> Rate:
+        rate = Rate(
+            name=name,
+            price_per_hour=price_per_hour,
+            minimum_charge=minimum_charge,
+            place_type=place_type,
+        )
         self.session.add(rate)
         await self.session.flush()
         return rate
