@@ -3,6 +3,7 @@ from decimal import Decimal
 from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
+from app.core.enums import ParkingPlaceType
 from app.models import Rate
 from app.services.exceptions.rates import RateAlreadyExistsError, RateInUseError, RateNotExistsError
 from app.uow import UnitOfWork
@@ -13,7 +14,11 @@ class RateService:
         self.uow = uow
 
     async def create_rate(
-        self, name: str, price_per_hour: Decimal, minimum_charge: Decimal
+        self,
+        name: str,
+        price_per_hour: Decimal,
+        minimum_charge: Decimal,
+        place_type: ParkingPlaceType,
     ) -> Rate:
         existing = await self.uow.rates.get_by_name(name)
 
@@ -21,7 +26,7 @@ class RateService:
             raise RateAlreadyExistsError(name)
 
         try:
-            return await self.uow.rates.create(name, price_per_hour, minimum_charge)
+            return await self.uow.rates.create(name, price_per_hour, minimum_charge, place_type)
         except IntegrityError as exc:
             if exc.orig is None:
                 raise
@@ -45,6 +50,7 @@ class RateService:
         new_name: str | None,
         new_price_per_hour: Decimal | None,
         new_minimum_charge: Decimal | None,
+        new_place_type: ParkingPlaceType | None,
     ) -> Rate:
         rate = await self.get_rate_by_name(name)
 
@@ -56,6 +62,9 @@ class RateService:
 
         if new_minimum_charge is not None:
             rate.minimum_charge = new_minimum_charge
+
+        if new_place_type is not None:
+            rate.place_type = new_place_type
 
         try:
             await self.uow.flush()

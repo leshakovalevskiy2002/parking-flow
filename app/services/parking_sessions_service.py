@@ -28,7 +28,7 @@ class ParkingSessionsService:
         if active_session:
             raise CarAlreadyParkedError(car_number)
 
-        free_place = await self.uow.parking_places.find_first_free()
+        free_place = await self.uow.parking_places.find_first_free(rate.place_type)
         if free_place is None:
             raise NoFreePlaceError()
 

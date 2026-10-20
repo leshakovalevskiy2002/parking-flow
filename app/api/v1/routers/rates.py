@@ -32,6 +32,7 @@ async def create_rate(
             name=rate_body.name,
             price_per_hour=rate_body.price_per_hour,
             minimum_charge=rate_body.minimum_charge,
+            place_type=rate_body.place_type,
         )
     except RateAlreadyExistsError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
@@ -62,6 +63,7 @@ async def update_rate(
             new_name=rate_body.name,
             new_price_per_hour=rate_body.price_per_hour,
             new_minimum_charge=rate_body.minimum_charge,
+            new_place_type=rate_body.place_type,
         )
     except RateNotExistsError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
