@@ -61,7 +61,8 @@ class AuthService:
             raise
 
     async def login(self, email: str, password: str) -> TokenPair:
-        user = await self.uow.users.get_by_email(email)
+        normalize_email = email.strip().lower()
+        user = await self.uow.users.get_by_email(normalize_email)
 
         if not user:
             verify_password(password, DUMMY_HASH)
