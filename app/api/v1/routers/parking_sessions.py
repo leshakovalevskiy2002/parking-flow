@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.api.v1.security import get_current_active_user
 from app.core.enums import ParkingSessionStatus
 from app.dependencies import get_parking_sessions_service
-from app.domain.errors import ParkingError
+from app.domain.errors import ParkingSessionError, RateNotExistsError
 from app.models import User
 from app.schemas.parking_sessions import (
     ParkingSessionCheckInRequest,
@@ -15,7 +15,6 @@ from app.schemas.parking_sessions import (
     ParkingSessionCheckOutResponse,
     ParkingSessionListResponse,
 )
-from app.services.exceptions.rates import RateNotExistsError
 from app.services.parking_sessions_service import ParkingSessionsService
 
 router = APIRouter(tags=["parking_sessions"], prefix="/parking_sessions")
@@ -35,7 +34,7 @@ async def check_in(
         )
     except RateNotExistsError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    except ParkingError as exc:
+    except ParkingSessionError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 
@@ -49,7 +48,7 @@ async def check_out(
 ):
     try:
         return await parking_sessions_service.check_out(check_out_body.car_number)
-    except ParkingError as exc:
+    except ParkingSessionError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
 

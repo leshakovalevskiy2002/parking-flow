@@ -12,15 +12,15 @@ from app.core.security import (
     get_password_hash,
     verify_password,
 )
-from app.models.user import User
-from app.schemas.auth import TokenData, TokenPair
-from app.services.exceptions.auth import (
+from app.domain.errors import (
     ExpiredTokenError,
     InactiveUserError,
     InvalidCredentialsError,
     TokenValidationError,
+    UserAlreadyExistsError,
 )
-from app.services.exceptions.users import UserAlreadyExistsError
+from app.models.user import User
+from app.schemas.auth import TokenData, TokenPair
 from app.uow import UnitOfWork
 
 

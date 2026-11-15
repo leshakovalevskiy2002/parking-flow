@@ -5,10 +5,14 @@ from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
 from app.core.enums import ParkingPlaceStatus, ParkingSessionStatus
-from app.domain.errors import CarAlreadyParkedError, CarNotParkedError, NoFreePlaceError
+from app.domain.errors import (
+    CarAlreadyParkedError,
+    CarNotParkedError,
+    NoFreePlaceError,
+    RateNotExistsError,
+)
 from app.domain.pricing import calculate_cost
 from app.models import ParkingSession, User
-from app.services.exceptions.rates import RateNotExistsError
 from app.uow import UnitOfWork
 
 

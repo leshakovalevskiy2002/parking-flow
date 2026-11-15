@@ -1,14 +1,11 @@
-class DomainError(Exception):
-    """Base domain exception"""
-
-    code: str
+from app.domain.errors import DomainError
 
 
-class ParkingError(DomainError):
-    """Parking flow error"""
+class ParkingSessionError(DomainError):
+    """Parking session flow error"""
 
 
-class CarAlreadyParkedError(ParkingError):
+class CarAlreadyParkedError(ParkingSessionError):
     code = "CAR_ALREADY_PARKED"
 
     def __init__(self, car_number: str) -> None:
@@ -16,7 +13,7 @@ class CarAlreadyParkedError(ParkingError):
         super().__init__(f"Car with car_number `{car_number}` already parked")
 
 
-class CarNotParkedError(ParkingError):
+class CarNotParkedError(ParkingSessionError):
     code = "CAR_NOT_PARKED"
 
     def __init__(self, car_number: str) -> None:
@@ -24,14 +21,14 @@ class CarNotParkedError(ParkingError):
         super().__init__(f"Car with car_number `{car_number}` not parked")
 
 
-class NoFreePlaceError(ParkingError):
+class NoFreePlaceError(ParkingSessionError):
     code = "NO_FREE_PLACE"
 
     def __init__(self) -> None:
         super().__init__("No free parking places")
 
 
-class CarIsParkedLegallyError(ParkingError):
+class CarIsParkedLegallyError(ParkingSessionError):
     code = "CAR_IS_PARKED_LEGALLY"
 
     def __init__(self, car_number: str) -> None:

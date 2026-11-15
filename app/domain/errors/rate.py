@@ -1,8 +1,11 @@
-class RateServiceError(Exception):
-    pass
+from app.domain.errors.base import DomainError
 
 
-class RateAlreadyExistsError(RateServiceError):
+class RateError(DomainError):
+    """Rate flow error"""
+
+
+class RateAlreadyExistsError(RateError):
     code = "RATE_ALREADY_EXISTS"
 
     def __init__(self, name: str) -> None:
@@ -10,7 +13,7 @@ class RateAlreadyExistsError(RateServiceError):
         super().__init__(f"Rate with name `{name}` already exists")
 
 
-class RateNotExistsError(RateServiceError):
+class RateNotExistsError(RateError):
     code = "RATE_NOT_EXISTS"
 
     def __init__(self, name: str) -> None:
@@ -18,7 +21,7 @@ class RateNotExistsError(RateServiceError):
         super().__init__(f"Rate with name `{name}` does not exist")
 
 
-class RateInUseError(RateServiceError):
+class RateInUseError(RateError):
     code = "RATE_IN_USE"
 
     def __init__(self, name: str) -> None:

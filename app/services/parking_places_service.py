@@ -2,12 +2,12 @@ from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
 from app.core.enums import ParkingPlaceStatus, ParkingPlaceType
-from app.models import ParkingPlace
-from app.services.exceptions.parking_places import (
+from app.domain.errors import (
     ParkingPlaceAlreadyExistsError,
     ParkingPlaceIsOccupiedError,
     ParkingPlaceNotExistsError,
 )
+from app.models import ParkingPlace
 from app.uow import UnitOfWork
 
 
