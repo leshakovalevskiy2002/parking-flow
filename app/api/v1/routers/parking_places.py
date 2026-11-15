@@ -4,16 +4,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.v1.security import get_admin_user
 from app.dependencies import get_parking_place_service, get_unit_of_work
+from app.domain.errors import (
+    ParkingPlaceAlreadyExistsError,
+    ParkingPlaceIsOccupiedError,
+    ParkingPlaceNotExistsError,
+)
 from app.models import User
 from app.schemas.parking_places import (
     ParkingPlaceRequest,
     ParkingPlaceResponse,
     UpdateParkingPlaceRequest,
-)
-from app.services.exceptions.parking_places import (
-    ParkingPlaceAlreadyExistsError,
-    ParkingPlaceIsOccupiedError,
-    ParkingPlaceNotExistsError,
 )
 from app.services.parking_places_service import ParkingPlaceService
 from app.uow import UnitOfWork

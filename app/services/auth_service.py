@@ -12,15 +12,15 @@ from app.core.security import (
     get_password_hash,
     verify_password,
 )
-from app.models.user import User
-from app.schemas.auth import TokenData, TokenPair
-from app.services.exceptions.auth import (
+from app.domain.errors import (
     ExpiredTokenError,
     InactiveUserError,
     InvalidCredentialsError,
     TokenValidationError,
+    UserAlreadyExistsError,
 )
-from app.services.exceptions.users import UserAlreadyExistsError
+from app.models.user import User
+from app.schemas.auth import TokenData, TokenPair
 from app.uow import UnitOfWork
 
 
@@ -61,7 +61,8 @@ class AuthService:
             raise
 
     async def login(self, email: str, password: str) -> TokenPair:
-        user = await self.uow.users.get_by_email(email)
+        normalize_email = email.strip().lower()
+        user = await self.uow.users.get_by_email(normalize_email)
 
         if not user:
             verify_password(password, DUMMY_HASH)

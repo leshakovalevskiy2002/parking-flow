@@ -1,8 +1,11 @@
-class UserServiceError(Exception):
-    pass
+from app.domain.errors.base import DomainError
 
 
-class UserAlreadyExistsError(UserServiceError):
+class UserError(DomainError):
+    """User flow error"""
+
+
+class UserAlreadyExistsError(UserError):
     code = "USER_ALREADY_EXISTS"
 
     def __init__(self, email: str) -> None:

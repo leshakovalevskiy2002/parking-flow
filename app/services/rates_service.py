@@ -4,8 +4,8 @@ from asyncpg import UniqueViolationError
 from sqlalchemy.exc import IntegrityError
 
 from app.core.enums import ParkingPlaceType
+from app.domain.errors import RateAlreadyExistsError, RateInUseError, RateNotExistsError
 from app.models import Rate
-from app.services.exceptions.rates import RateAlreadyExistsError, RateInUseError, RateNotExistsError
 from app.uow import UnitOfWork
 
 

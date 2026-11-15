@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.v1.security import get_admin_user
 from app.dependencies import get_rate_service, get_unit_of_work
+from app.domain.errors import RateAlreadyExistsError, RateInUseError, RateNotExistsError
 from app.models import User
 from app.schemas.rates import CreateRateRequest, RateResponse, UpdateRateRequest
-from app.services.exceptions.rates import RateAlreadyExistsError, RateInUseError, RateNotExistsError
 from app.services.rates_service import RateService
 from app.uow import UnitOfWork
 

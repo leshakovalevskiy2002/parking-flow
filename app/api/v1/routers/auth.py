@@ -4,16 +4,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies import get_auth_service
-from app.schemas.auth import RefreshRequest, TokenPair
-from app.schemas.users import UserRegisterRequest, UserResponse
-from app.services.auth_service import AuthService
-from app.services.exceptions.auth import (
+from app.domain.errors import (
     ExpiredTokenError,
     InactiveUserError,
     InvalidCredentialsError,
     TokenValidationError,
+    UserAlreadyExistsError,
 )
-from app.services.exceptions.users import UserAlreadyExistsError
+from app.schemas.auth import RefreshRequest, TokenPair
+from app.schemas.users import UserRegisterRequest, UserResponse
+from app.services.auth_service import AuthService
 
 router = APIRouter(tags=["auth"], prefix="/auth")
 

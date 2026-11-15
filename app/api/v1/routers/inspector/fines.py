@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from app.api.v1.security import get_inspector_user
 from app.core.enums import FineStatus
 from app.dependencies import get_fines_service
-from app.domain.errors import ParkingError
+from app.domain.errors import ParkingSessionError
 from app.models import User
 from app.schemas.fines import CreateFineRequest, FineListAdminResponse, FineResponse
 from app.services.fines_service import FinesService
@@ -26,7 +26,7 @@ async def create_fine(
         return await fines_service.create_fine(
             inspector, fine_request_body.car_number, idempotency_key
         )
-    except ParkingError as exc:
+    except ParkingSessionError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
         ) from exc
