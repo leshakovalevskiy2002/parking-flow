@@ -9,7 +9,6 @@ from app.domain.errors import (
     ParkingPlaceIsOccupiedError,
     ParkingPlaceNotExistsError,
 )
-from app.models import User
 from app.schemas.parking_places import (
     ParkingPlaceRequest,
     ParkingPlaceResponse,
@@ -18,21 +17,19 @@ from app.schemas.parking_places import (
 from app.services.parking_places_service import ParkingPlaceService
 from app.uow import UnitOfWork
 
-router = APIRouter(tags=["parking_places"], prefix="/parking_places")
+router = APIRouter(
+    tags=["parking_places"], prefix="/admin/parking_places", dependencies=[Depends(get_admin_user)]
+)
 
 
 @router.get("", response_model=list[ParkingPlaceResponse])
-async def get_parking_places(
-    _: Annotated[User, Depends(get_admin_user)],
-    uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
-):
+async def get_parking_places(uow: Annotated[UnitOfWork, Depends(get_unit_of_work)]):
     return await uow.parking_places.get_parking_places()
 
 
 @router.post("", response_model=ParkingPlaceResponse, status_code=status.HTTP_201_CREATED)
 async def create_parking_place(
     parking_place_body: ParkingPlaceRequest,
-    _: Annotated[User, Depends(get_admin_user)],
     parking_place_service: Annotated[ParkingPlaceService, Depends(get_parking_place_service)],
 ):
     try:
@@ -48,7 +45,6 @@ async def create_parking_place(
 @router.get("/{place_number}", response_model=ParkingPlaceResponse)
 async def get_parking_place_by_number(
     place_number: str,
-    _: Annotated[User, Depends(get_admin_user)],
     parking_place_service: Annotated[ParkingPlaceService, Depends(get_parking_place_service)],
 ):
     try:
@@ -61,7 +57,6 @@ async def get_parking_place_by_number(
 async def update_parking_place(
     place_number: str,
     parking_place_body: UpdateParkingPlaceRequest,
-    _: Annotated[User, Depends(get_admin_user)],
     parking_place_service: Annotated[ParkingPlaceService, Depends(get_parking_place_service)],
 ):
     try:
@@ -80,7 +75,6 @@ async def update_parking_place(
 @router.delete("/{place_number}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_parking_place(
     place_number: str,
-    _: Annotated[User, Depends(get_admin_user)],
     parking_place_service: Annotated[ParkingPlaceService, Depends(get_parking_place_service)],
 ) -> None:
     try:
