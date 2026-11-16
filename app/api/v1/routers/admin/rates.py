@@ -5,26 +5,21 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.api.v1.security import get_admin_user
 from app.dependencies import get_rate_service, get_unit_of_work
 from app.domain.errors import RateAlreadyExistsError, RateInUseError, RateNotExistsError
-from app.models import User
 from app.schemas.rates import CreateRateRequest, RateResponse, UpdateRateRequest
 from app.services.rates_service import RateService
 from app.uow import UnitOfWork
 
-router = APIRouter(tags=["rates"], prefix="/rates")
+router = APIRouter(tags=["rates"], prefix="/admin/rates", dependencies=[Depends(get_admin_user)])
 
 
 @router.get("", response_model=list[RateResponse])
-async def get_rates(
-    _: Annotated[User, Depends(get_admin_user)],
-    uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
-):
+async def get_rates(uow: Annotated[UnitOfWork, Depends(get_unit_of_work)]):
     return await uow.rates.get_rates()
 
 
 @router.post("", response_model=RateResponse, status_code=status.HTTP_201_CREATED)
 async def create_rate(
     rate_body: CreateRateRequest,
-    _: Annotated[User, Depends(get_admin_user)],
     rate_service: Annotated[RateService, Depends(get_rate_service)],
 ):
     try:
@@ -41,7 +36,6 @@ async def create_rate(
 @router.get("/{rate_name}", response_model=RateResponse)
 async def get_rate_by_name(
     rate_name: str,
-    _: Annotated[User, Depends(get_admin_user)],
     rate_service: Annotated[RateService, Depends(get_rate_service)],
 ):
     try:
@@ -54,7 +48,6 @@ async def get_rate_by_name(
 async def update_rate(
     rate_name: str,
     rate_body: UpdateRateRequest,
-    _: Annotated[User, Depends(get_admin_user)],
     rate_service: Annotated[RateService, Depends(get_rate_service)],
 ):
     try:
@@ -74,7 +67,6 @@ async def update_rate(
 @router.delete("/{rate_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_rate(
     rate_name: str,
-    _: Annotated[User, Depends(get_admin_user)],
     rate_service: Annotated[RateService, Depends(get_rate_service)],
 ) -> None:
     try:

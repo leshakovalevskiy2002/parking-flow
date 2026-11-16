@@ -38,10 +38,11 @@ class RateService:
             raise
 
     async def get_rate_by_name(self, name: str) -> Rate:
-        rate = await self.uow.rates.get_by_name(name.capitalize())
+        normalize_name = name.capitalize()
+        rate = await self.uow.rates.get_by_name(normalize_name)
 
         if rate is None:
-            raise RateNotExistsError(name)
+            raise RateNotExistsError(normalize_name)
         return rate
 
     async def update_rate(

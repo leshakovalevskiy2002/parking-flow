@@ -36,10 +36,11 @@ class ParkingPlaceService:
             raise
 
     async def get_parking_place_by_number(self, number: str) -> ParkingPlace:
-        parking_place = await self.uow.parking_places.get_by_number(number.upper())
+        normalize_number = number.upper()
+        parking_place = await self.uow.parking_places.get_by_number(normalize_number)
 
         if parking_place is None:
-            raise ParkingPlaceNotExistsError(number)
+            raise ParkingPlaceNotExistsError(normalize_number)
 
         return parking_place
 

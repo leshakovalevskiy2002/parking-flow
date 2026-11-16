@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.api.v1.routers import auth, fines, parking_places, parking_sessions, rates, users
+from app.api.v1.routers import auth, fines, parking_sessions, users
+from app.api.v1.routers.admin import parking_places, rates
 from app.api.v1.routers.admin import parking_sessions as parking_sessions_admin
 from app.api.v1.routers.inspector import fines as fines_inspector
 
