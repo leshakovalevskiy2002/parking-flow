@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
 from app.api import router
+from app.config.exceptions import setup_exception_handlers
 
 app = FastAPI()
+
+setup_exception_handlers(app)
+
 app.include_router(router)
 
 

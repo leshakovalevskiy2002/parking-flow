@@ -1,12 +1,11 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query
 
 from app.api.v1.security import get_current_active_user
 from app.core.enums import ParkingSessionStatus
-from app.dependencies import get_parking_sessions_service
-from app.domain.errors import ParkingSessionError, RateNotExistsError
+from app.dependencies import ParkingSessionsServiceDep
 from app.models import User
 from app.schemas.parking_sessions import (
     ParkingSessionCheckInRequest,
@@ -15,7 +14,6 @@ from app.schemas.parking_sessions import (
     ParkingSessionCheckOutResponse,
     ParkingSessionListResponse,
 )
-from app.services.parking_sessions_service import ParkingSessionsService
 
 router = APIRouter(tags=["parking_sessions"], prefix="/parking_sessions")
 
@@ -24,40 +22,26 @@ router = APIRouter(tags=["parking_sessions"], prefix="/parking_sessions")
 async def check_in(
     check_in_body: ParkingSessionCheckInRequest,
     user: Annotated[User, Depends(get_current_active_user)],
-    parking_sessions_service: Annotated[
-        ParkingSessionsService, Depends(get_parking_sessions_service)
-    ],
+    parking_sessions_service: ParkingSessionsServiceDep,
 ):
-    try:
-        return await parking_sessions_service.check_in(
-            user=user, car_number=check_in_body.car_number, rate_name=check_in_body.rate_name
-        )
-    except RateNotExistsError as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    except ParkingSessionError as exc:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+    return await parking_sessions_service.check_in(
+        user=user, car_number=check_in_body.car_number, rate_name=check_in_body.rate_name
+    )
 
 
 @router.post("/check-out", response_model=ParkingSessionCheckOutResponse)
 async def check_out(
     check_out_body: ParkingSessionCheckOutRequest,
     _: Annotated[User, Depends(get_current_active_user)],
-    parking_sessions_service: Annotated[
-        ParkingSessionsService, Depends(get_parking_sessions_service)
-    ],
+    parking_sessions_service: ParkingSessionsServiceDep,
 ):
-    try:
-        return await parking_sessions_service.check_out(check_out_body.car_number)
-    except ParkingSessionError as exc:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+    return await parking_sessions_service.check_out(check_out_body.car_number)
 
 
 @router.get("", response_model=ParkingSessionListResponse)
 async def get_parking_sessions(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    parking_sessions_service: Annotated[
-        ParkingSessionsService, Depends(get_parking_sessions_service)
-    ],
+    parking_sessions_service: ParkingSessionsServiceDep,
     session_status: ParkingSessionStatus | None = None,
     car_number: str | None = Query(None, max_length=16),
     from_date: datetime | None = None,

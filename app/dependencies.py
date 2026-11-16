@@ -43,3 +43,10 @@ async def get_fines_service(
     uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
 ) -> FinesService:
     return FinesService(uow)
+
+
+AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+FinesServiceDep = Annotated[FinesService, Depends(get_fines_service)]
+ParkingPlaceServiceDep = Annotated[ParkingPlaceService, Depends(get_parking_place_service)]
+ParkingSessionsServiceDep = Annotated[ParkingSessionsService, Depends(get_parking_sessions_service)]
+RateServiceDep = Annotated[RateService, Depends(get_rate_service)]
