@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, String, UniqueConstraint
+from sqlalchemy import Enum, String, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.enums import UserRole, UserStatus
@@ -21,6 +21,9 @@ class User(Base):
     status: Mapped[UserStatus] = mapped_column(
         Enum(UserStatus, name="user_status_enum"),
         server_default=UserStatus.ACTIVE.value,
+    )
+    has_disabled_permission: Mapped[bool] = mapped_column(
+        default=False, server_default=text("false")
     )
 
     parking_sessions: Mapped[list["ParkingSession"]] = relationship(back_populates="user")

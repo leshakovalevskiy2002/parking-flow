@@ -3,6 +3,7 @@ from app.models.parking_place import ParkingPlace
 from app.models.parking_session import ParkingSession
 from app.models.rate import Rate
 from app.models.user import User
+from app.models.violation_type import ViolationType
 
 __all__ = [
     "Fine",
@@ -10,4 +11,5 @@ __all__ = [
     "ParkingSession",
     "Rate",
     "User",
+    "ViolationType",
 ]
