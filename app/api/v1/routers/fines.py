@@ -5,10 +5,9 @@ from fastapi import APIRouter, Depends, Query
 
 from app.api.v1.security import get_current_active_user
 from app.core.enums import FineStatus
-from app.dependencies import get_fines_service
+from app.dependencies import FinesServiceDep
 from app.models import User
 from app.schemas.fines import FineListResponse
-from app.services.fines_service import FinesService
 
 router = APIRouter(tags=["fines"], prefix="/fines")
 
@@ -16,7 +15,7 @@ router = APIRouter(tags=["fines"], prefix="/fines")
 @router.get("", response_model=FineListResponse)
 async def get_fines(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    fines_service: Annotated[FinesService, Depends(get_fines_service)],
+    fines_service: FinesServiceDep,
     car_number: str | None = Query(None, max_length=16),
     status: FineStatus | None = None,
     from_date: datetime | None = None,
