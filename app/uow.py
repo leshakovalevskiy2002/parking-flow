@@ -7,6 +7,7 @@ from app.repositories.parking_places import ParkingPlaceRepository
 from app.repositories.parking_sessions import ParkingSessionRepository
 from app.repositories.rates import RateRepository
 from app.repositories.users import UserRepository
+from app.repositories.violation_types import ViolationTypeRepository
 
 
 class UnitOfWork:
@@ -22,6 +23,7 @@ class UnitOfWork:
         self.rates = RateRepository(self.session)
         self.parking_sessions = ParkingSessionRepository(self.session)
         self.fines = FinesRepository(self.session)
+        self.violation_types = ViolationTypeRepository(self.session)
 
         return self
 

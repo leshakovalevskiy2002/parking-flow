@@ -26,6 +26,7 @@ from app.domain.errors.rate import (
     RateNotExistsError,
 )
 from app.domain.errors.user import UserAlreadyExistsError, UserError
+from app.domain.errors.violation_type import ViolationTypeError, ViolationTypeNotFoundError
 
 __all__ = [
     "AuthError",
@@ -49,4 +50,6 @@ __all__ = [
     "TokenValidationError",
     "UserAlreadyExistsError",
     "UserError",
+    "ViolationTypeError",
+    "ViolationTypeNotFoundError",
 ]
