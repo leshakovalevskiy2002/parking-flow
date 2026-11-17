@@ -9,6 +9,7 @@ from app.services.fines_service import FinesService
 from app.services.parking_places_service import ParkingPlaceService
 from app.services.parking_sessions_service import ParkingSessionsService
 from app.services.rates_service import RateService
+from app.services.violation_types_service import ViolationTypeService
 from app.uow import UnitOfWork
 
 
@@ -45,8 +46,15 @@ async def get_fines_service(
     return FinesService(uow)
 
 
+async def get_violation_types_service(
+    uow: Annotated[UnitOfWork, Depends(get_unit_of_work)],
+) -> ViolationTypeService:
+    return ViolationTypeService(uow)
+
+
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 FinesServiceDep = Annotated[FinesService, Depends(get_fines_service)]
 ParkingPlaceServiceDep = Annotated[ParkingPlaceService, Depends(get_parking_place_service)]
 ParkingSessionsServiceDep = Annotated[ParkingSessionsService, Depends(get_parking_sessions_service)]
 RateServiceDep = Annotated[RateService, Depends(get_rate_service)]
+ViolationTypeServiceDep = Annotated[ViolationTypeService, Depends(get_violation_types_service)]

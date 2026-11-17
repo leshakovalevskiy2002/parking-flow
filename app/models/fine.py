@@ -31,6 +31,7 @@ class Fine(Base):
     issued_by_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="RESTRICT"), index=True
     )
+    violation_type_id: Mapped[UUID] = mapped_column(ForeignKey("violation_types.id"))
     issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     status: Mapped[FineStatus] = mapped_column(
         Enum(FineStatus, name="fine_status_enum"),

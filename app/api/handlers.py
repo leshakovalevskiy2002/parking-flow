@@ -17,6 +17,7 @@ from app.domain.errors import (
     RateNotExistsError,
     TokenValidationError,
     UserError,
+    ViolationTypeError,
 )
 
 
@@ -89,4 +90,13 @@ async def auth_exception_handler(_request: Request, exc: AuthError) -> JSONRespo
         status_code=_get_status_code_for_auth_error(exc),
         content={"detail": str(exc)},
         headers=headers,
+    )
+
+
+async def violation_type_exception_handler(
+    _request: Request, exc: ViolationTypeError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": str(exc)},
     )

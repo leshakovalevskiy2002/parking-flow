@@ -6,6 +6,7 @@ from app.api.handlers import (
     parking_session_exception_handler,
     rate_exception_handler,
     user_exception_handler,
+    violation_type_exception_handler,
 )
 from app.domain.errors import (
     AuthError,
@@ -13,6 +14,7 @@ from app.domain.errors import (
     ParkingSessionError,
     RateError,
     UserError,
+    ViolationTypeError,
 )
 
 
@@ -22,3 +24,4 @@ def setup_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(UserError, user_exception_handler)  # type: ignore[arg-type]
     app.add_exception_handler(ParkingSessionError, parking_session_exception_handler)  # type: ignore[arg-type]
     app.add_exception_handler(AuthError, auth_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(ViolationTypeError, violation_type_exception_handler)  # type: ignore[arg-type]
